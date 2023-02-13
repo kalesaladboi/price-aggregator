@@ -10,24 +10,35 @@ window = tk.Tk()
 window.title("TipTops Price Aggregator")
 window.geometry("400x200")
 
-#buttons
+#Functions
 
-def LakeClerk():
-    exec(open("LakeClerkPriceTracker.py").read())
+def search():
+    if clicked.get() == "Lake County" :
+        exec(open("LakeCountyPriceTracker.py").read())
+    if clicked.get() == "Lake Tax":
+        exec(open("LakeCountyPriceTracker.py").read())
+    if clicked.get() == "Lake Clerk":
+        exec(open("LakeClerkPriceTracker.py").read())
 
-def LakeCounty():
-    exec(open("LakeCountyPriceTracker.py").read())
 
-def LakeTax():
-    exec(open("LakeCountyPriceTracker.py").read())
+#Dropdown
 
-btn1 = Button(window, text="Lake Clerk", bg="black", fg="white", command = LakeClerk)
-btn1.grid(column=1, row=5, padx=25, pady=25)
+options = [
+    "Lake Clerk",
+    "Lake County",
+    "Lake Tax"
+]
 
-btn2 = Button(window, text="Lake County", bg="black", fg="white", command = LakeCounty)
-btn2.grid(column=2, row=5, padx=25, pady=25)
+clicked = StringVar()
 
-btn3 = Button(window, text="Lake Tax", bg="black", fg="white", command = LakeTax)
-btn3.grid(column=3, row=5, padx=25, pady=25)
+clicked.set("Lake Clerk")
+
+drop = OptionMenu(window, clicked, *options)
+drop.grid(column= 1, row=1, columnspan=2, padx=10, pady=25)
+
+btn = Button(window, text = "Get Prices", command = search)
+btn.grid(column= 3, row=1, columnspan=1, padx=10, pady=25)
+
+label = Label(window, text= " ")
 
 window.mainloop()

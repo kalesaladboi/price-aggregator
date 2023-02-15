@@ -325,8 +325,8 @@
             "Celadon Blue",
             "Vine Green"
         ],
-        "Price": "19.98",
-        "Newprice": "=19.98+8"
+        "Price": "17.98",
+        "Newprice": "=17.98+8"
     },
     {
         "Style": "TLK510",

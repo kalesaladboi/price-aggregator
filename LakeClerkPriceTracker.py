@@ -3,6 +3,9 @@ from pprint import pprint
 import json
 import requests
 import os
+import tkinter as tk
+import tkinter.ttk as ttk
+from tkinter import *
 
 urls = [
 'https://www.sanmar.com/p/2716_CloverGrn?text=s608',
@@ -44,6 +47,8 @@ urls = [
 ]
 
 my_data= []
+
+
 
 for url in urls:
 

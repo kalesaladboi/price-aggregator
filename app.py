@@ -3,10 +3,6 @@ import os
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import *
-import customtkinter
-
-customtkinter.set_appearance_mode("system")
-customtkinter.set_default_color_theme("blue")
 
 window = tk.Tk()
 

@@ -2,6 +2,8 @@ import tkinter
 import tkinter.messagebox
 import customtkinter
 import pymysql
+from bs4 import BeautifulSoup
+import requests
 
 customtkinter.set_appearance_mode("System")  
 customtkinter.set_default_color_theme("blue")  
@@ -36,8 +38,8 @@ class App(customtkinter.CTk):
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         #Pricing Tab
-        pricing_combobox_var = customtkinter.StringVar()
-        self.pricing_combobox = customtkinter.CTkComboBox( self.tabview.tab("Pricing"), width= 140, values = ["Lake County", "Lake Tax", "Lake Clerk"], command = lambda: self.sidebar_button_event(choice), variable = pricing_combobox_var)
+        store_var = customtkinter.StringVar(value = "Lake County")
+        self.pricing_combobox = customtkinter.CTkComboBox( self.tabview.tab("Pricing"), width= 140, values = ["Lake County", "Lake Tax", "Lake Clerk"], command = lambda: self.pricing_aggregate(store_var), variable = store_var)
         self.pricing_combobox.grid( row = 0, column= 0 )
         self.pricing_combobox.set("Lake County")
 
@@ -84,7 +86,7 @@ class App(customtkinter.CTk):
         passw_Veri_entry.grid( padx=25, pady = 10, sticky = "nw")
         email_entry = customtkinter.CTkEntry(self.account_tabview.tab("Register"), width=125, height= 25, corner_radius=10, placeholder_text="Email")
         email_entry.grid( padx=25, pady = 10, sticky = "nw")
-        signUpBtn=customtkinter.CTkButton(self.account_tabview.tab("Register"),width=125,height=25,corner_radius=10, text="Sign Up", command = lambda: self.register(name_entry, user_entry, email_entry, passw_entry, passw_Veri_entry))        
+        signUpBtn = customtkinter.CTkButton(self.account_tabview.tab("Register"),width=125,height=25,corner_radius=10, text="Sign Up", command = lambda: self.register(name_entry, user_entry, email_entry, passw_entry, passw_Veri_entry))        
         signUpBtn.grid(padx = 25, pady = 10, sticky = "nw")
 
         #Login Form
@@ -148,10 +150,182 @@ class App(customtkinter.CTk):
     def log_in(self, login_user_entry, login_passw_entry):
         name = login_user_entry.get()
         passw = login_passw_entry.get()
+        if name == "" or passw == "":
+            tkinter.messagebox.showerror("error", "All Fields Required", parent = self.account_tabview.tab("Register"))
+        else:
+            con = pymysql.connect(host = "localhost", user = "root", password = "Delta321", database = "tiptops")
+            cur = con.cursor()
+            cur.execute("")
+        
 
-    def pricing_aggregate(store, choice):
-        print(store.get())
+    def pricing_aggregate(self, store_var):
 
+        store = store_var.get()
+
+        print(store)
+
+        my_data= []
+
+        if store == "Lake Tax":
+            urls = [
+                'https://www.sanmar.com/p/2716_CloverGrn?text=s608',
+                'https://www.sanmar.com/p/648_AthlGold?text=s608es',
+                'https://www.sanmar.com/p/751_UltramrnBl?text=tls608',
+                'https://www.sanmar.com/p/1694_DeepBerry?text=l608',
+                'https://www.sanmar.com/p/2383_RoyClsNvy?text=s508',
+                'https://www.sanmar.com/p/5682_DkGreenNv?text=tls508',
+                'https://www.sanmar.com/p/1441_UltramrnBl?text=l508',
+                'https://www.sanmar.com/p/2949_Charcoal?text=sp14',
+                'https://www.sanmar.com/p/5745_PetrolBlue?text=sp14long',
+                'https://www.sanmar.com/p/7_LightBlue?text=sp24',
+                'https://www.sanmar.com/p/5746_LightBlue?text=sp24long',
+                'https://www.sanmar.com/p/3832_Royal?text=k510',
+                'https://www.sanmar.com/p/5623_Navy?text=tlk510',
+                'https://www.sanmar.com/p/1225_StrongBlue?text=k500',
+                'https://www.sanmar.com/p/2274_Navy?text=tlk500',
+                'https://www.sanmar.com/p/1407_DeepBerry?text=l500',
+                'https://www.sanmar.com/p/112_CoolGrey?text=k500p',
+                'https://www.sanmar.com/p/5736_Royal?text=tlk500p',
+                'https://www.sanmar.com/p/1557_Burgundy?text=k500ls',
+                'https://www.sanmar.com/p/5735_CoolGrey?text=tlk500ls',
+                'https://www.sanmar.com/p/1362_Royal?text=l500ls',
+                'https://www.sanmar.com/p/3859_TrueNavy?text=st650',
+                'https://www.sanmar.com/p/5656_KellyGreen?text=tst650',
+                'https://www.sanmar.com/p/5494_Maroon?text=st651',
+                'https://www.sanmar.com/p/4042_Royal?text=cs410',
+                'https://www.sanmar.com/p/5687_DarkNavy?text=tlcs410',
+                'https://www.sanmar.com/p/4043_DarkNavy?text=cs411',
+                'https://www.sanmar.com/p/9068_DarkNavy?text=cs420',
+                'https://www.sanmar.com/p/5002_Tan?text=cs410ls',
+                'https://www.sanmar.com/p/8581_Scarlet?text=nea201',
+                'https://www.sanmar.com/p/4121_SnrklBlBk?text=j304',
+                'https://www.sanmar.com/p/4122_BlkBlk?text=l304',
+                'https://www.sanmar.com/p/1890_KhkTrBlk',
+                'https://www.sanmar.com/p/2874_TrBlkGrey?text=tlj754',
+                'https://www.sanmar.com/p/657_TNvGyHRf?text=j754r',
+                'https://www.sanmar.com/p/5214_CharChar?text=ne1020'
+            ]
+            
+            for url in urls:
+                
+                response = requests.get(url)
+                soup = BeautifulSoup(response.text, "html.parser")
+                prices = soup.find(class_='price').get_text()
+                price = prices[15:20]
+                newprice = "=" + price + "+8"
+                colors = soup.find_all('span', attrs={'class':'swatch-name'})
+                swatches = [color.get_text() for color in colors]
+                style = soup.find(class_= 'product-style-number').get_text()
+                my_data.append({"Style": style, "Color": swatches,"Price": price, "Newprice": newprice})
+                print (style + " retrieved" )
+
+        elif store == "Lake Clerk":
+            urls = [
+                'https://www.sanmar.com/p/2716_CloverGrn?text=s608',
+                'https://www.sanmar.com/p/648_AthlGold?text=s608es',
+                'https://www.sanmar.com/p/751_UltramrnBl?text=tls608',
+                'https://www.sanmar.com/p/1694_DeepBerry?text=l608',
+                'https://www.sanmar.com/p/2383_RoyClsNvy?text=s508',
+                'https://www.sanmar.com/p/5682_DkGreenNv?text=tls508',
+                'https://www.sanmar.com/p/1441_UltramrnBl?text=l508',
+                'https://www.sanmar.com/p/2949_Charcoal?text=sp14',
+                'https://www.sanmar.com/p/5745_PetrolBlue?text=sp14long',
+                'https://www.sanmar.com/p/7_LightBlue?text=sp24',
+                'https://www.sanmar.com/p/5746_LightBlue?text=sp24long',
+                'https://www.sanmar.com/p/3832_Royal?text=k510',
+                'https://www.sanmar.com/p/5623_Navy?text=tlk510',
+                'https://www.sanmar.com/p/1225_StrongBlue?text=k500',
+                'https://www.sanmar.com/p/2274_Navy?text=tlk500',
+                'https://www.sanmar.com/p/1407_DeepBerry?text=l500',
+                'https://www.sanmar.com/p/112_CoolGrey?text=k500p',
+                'https://www.sanmar.com/p/5736_Royal?text=tlk500p',
+                'https://www.sanmar.com/p/1557_Burgundy?text=k500ls',
+                'https://www.sanmar.com/p/5735_CoolGrey?text=tlk500ls',
+                'https://www.sanmar.com/p/1362_Royal?text=l500ls',
+                'https://www.sanmar.com/p/3859_TrueNavy?text=st650',
+                'https://www.sanmar.com/p/5656_KellyGreen?text=tst650',
+                'https://www.sanmar.com/p/5494_Maroon?text=st651',
+                'https://www.sanmar.com/p/4042_Royal?text=cs410',
+                'https://www.sanmar.com/p/5687_DarkNavy?text=tlcs410',
+                'https://www.sanmar.com/p/4043_DarkNavy?text=cs411',
+                'https://www.sanmar.com/p/9068_DarkNavy?text=cs420',
+                'https://www.sanmar.com/p/5002_Tan?text=cs410ls',
+                'https://www.sanmar.com/p/8581_Scarlet?text=nea201',
+                'https://www.sanmar.com/p/4121_SnrklBlBk?text=j304',
+                'https://www.sanmar.com/p/4122_BlkBlk?text=l304',
+                'https://www.sanmar.com/p/1890_KhkTrBlk',
+                'https://www.sanmar.com/p/2874_TrBlkGrey?text=tlj754',
+                'https://www.sanmar.com/p/657_TNvGyHRf?text=j754r',
+                'https://www.sanmar.com/p/5214_CharChar?text=ne1020'
+                ]
+
+            for url in urls:
+
+                response = requests.get(url)
+                soup = BeautifulSoup(response.text, "html.parser")
+                prices = soup.find(class_='price').get_text()
+                price = prices[15:20]
+                newprice = "=" + price + "+8"
+                colors = soup.find_all('span', attrs={'class':'swatch-name'})
+                swatches = [color.get_text() for color in colors]
+                style = soup.find(class_= 'product-style-number').get_text()
+                my_data.append({"Style": style, "Color": swatches,"Price": price, "Newprice": newprice})
+                print (style + " retrieved" )
+        
+        elif store == "Lake County":
+            urls = [
+                'https://www.sanmar.com/p/2716_CloverGrn?text=s608',
+                'https://www.sanmar.com/p/648_AthlGold?text=s608es',
+                'https://www.sanmar.com/p/751_UltramrnBl?text=tls608',
+                'https://www.sanmar.com/p/1694_DeepBerry?text=l608',
+                'https://www.sanmar.com/p/2383_RoyClsNvy?text=s508',
+                'https://www.sanmar.com/p/5682_DkGreenNv?text=tls508',
+                'https://www.sanmar.com/p/1441_UltramrnBl?text=l508',
+                'https://www.sanmar.com/p/2949_Charcoal?text=sp14',
+                'https://www.sanmar.com/p/5745_PetrolBlue?text=sp14long',
+                'https://www.sanmar.com/p/7_LightBlue?text=sp24',
+                'https://www.sanmar.com/p/5746_LightBlue?text=sp24long',
+                'https://www.sanmar.com/p/3832_Royal?text=k510',
+                'https://www.sanmar.com/p/5623_Navy?text=tlk510',
+                'https://www.sanmar.com/p/1225_StrongBlue?text=k500',
+                'https://www.sanmar.com/p/2274_Navy?text=tlk500',
+                'https://www.sanmar.com/p/1407_DeepBerry?text=l500',
+                'https://www.sanmar.com/p/112_CoolGrey?text=k500p',
+                'https://www.sanmar.com/p/5736_Royal?text=tlk500p',
+                'https://www.sanmar.com/p/1557_Burgundy?text=k500ls',
+                'https://www.sanmar.com/p/5735_CoolGrey?text=tlk500ls',
+                'https://www.sanmar.com/p/1362_Royal?text=l500ls',
+                'https://www.sanmar.com/p/3859_TrueNavy?text=st650',
+                'https://www.sanmar.com/p/5656_KellyGreen?text=tst650',
+                'https://www.sanmar.com/p/5494_Maroon?text=st651',
+                'https://www.sanmar.com/p/4042_Royal?text=cs410',
+                'https://www.sanmar.com/p/5687_DarkNavy?text=tlcs410',
+                'https://www.sanmar.com/p/4043_DarkNavy?text=cs411',
+                'https://www.sanmar.com/p/9068_DarkNavy?text=cs420',
+                'https://www.sanmar.com/p/5002_Tan?text=cs410ls',
+                'https://www.sanmar.com/p/8581_Scarlet?text=nea201',
+                'https://www.sanmar.com/p/4121_SnrklBlBk?text=j304',
+                'https://www.sanmar.com/p/4122_BlkBlk?text=l304',
+                'https://www.sanmar.com/p/1890_KhkTrBlk',
+                'https://www.sanmar.com/p/2874_TrBlkGrey?text=tlj754',
+                'https://www.sanmar.com/p/657_TNvGyHRf?text=j754r',
+                'https://www.sanmar.com/p/5214_CharChar?text=ne1020'
+            ]
+
+            my_data= []
+
+            for url in urls:
+
+                response = requests.get(url)
+                soup = BeautifulSoup(response.text, "html.parser")
+                prices = soup.find(class_='price').get_text()
+                price = prices[15:20]
+                newprice = "=" + price + "+8"
+                colors = soup.find_all('span', attrs={'class':'swatch-name'})
+                swatches = [color.get_text() for color in colors]
+                style = soup.find(class_= 'product-style-number').get_text()
+                my_data.append({"Style": style, "Color": swatches,"Price": price, "Newprice": newprice})
+                print (style + " retrieved" )
 
 if __name__ == "__main__":
     app = App()

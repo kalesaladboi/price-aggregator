@@ -29,13 +29,19 @@ class App(customtkinter.CTk):
         self.tabview.add("Account")
 
         #Sidebar frame
-        self.sidebar_frame = customtkinter.CTkFrame(self, width=140, corner_radius=25)
+        self.sidebar_frame = customtkinter.CTkFrame(self, width=140)
         self.sidebar_frame.grid(row=0, column=0, rowspan=5, sticky="nsew")
         self.sidebar_frame.grid_rowconfigure(4, weight=1)
         self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="Options", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
 
-        #invoices tab
+        #Pricing Tab
+        pricing_combobox_var = customtkinter.StringVar()
+        self.pricing_combobox = customtkinter.CTkComboBox( self.tabview.tab("Pricing"), width= 140, values = ["Lake County", "Lake Tax", "Lake Clerk"], command = lambda: self.sidebar_button_event(choice), variable = pricing_combobox_var)
+        self.pricing_combobox.grid( row = 0, column= 0 )
+        self.pricing_combobox.set("Lake County")
+
+        #Invoices Tab
         self.invoices_tabview = customtkinter.CTkTabview(self.tabview.tab("Invoices"), corner_radius = 25)
         self.invoices_tabview.place(x=0, y=0, relwidth=1, relheight=1)
         self.invoices_tabview.add("Jobs")
@@ -53,6 +59,7 @@ class App(customtkinter.CTk):
         self.appearance_mode_label.grid(row=5, column=0, padx=20, pady=(10, 0))
         self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["Light", "Dark", "System"], command=self.change_appearance_mode_event)
         self.appearance_mode_optionemenu.grid(row=6, column=0, padx=20, pady=(10, 10))
+        self.appearance_mode_optionemenu.set("Dark")
         self.scaling_label = customtkinter.CTkLabel(self.sidebar_frame, text="UI Scaling:", anchor="w")
         self.scaling_label.grid(row=7, column=0, padx=20, pady=(10, 0))
         self.scaling_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["80%", "90%", "100%", "110%", "120%"], command=self.change_scaling_event)
@@ -67,37 +74,35 @@ class App(customtkinter.CTk):
         #Account form
         self.signup = customtkinter.CTkLabel(self.account_tabview.tab("Register"), text="Create Account", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.signup.grid( padx=25, pady = 10)
-        nameentry = customtkinter.CTkEntry(self.account_tabview.tab("Register"), width=125, height= 25, corner_radius=10, placeholder_text="Name")
-        nameentry.grid( padx=25, pady = 10, sticky = "nw")
-        userentry = customtkinter.CTkEntry(self.account_tabview.tab("Register"), width=125, height= 25, corner_radius=10, placeholder_text="User Name")
-        userentry.grid( padx=25, pady = 10, sticky = "nw")
-        passwentry = customtkinter.CTkEntry(self.account_tabview.tab("Register"), width=125, height= 25, corner_radius=10, placeholder_text="Password")
-        passwentry.grid( padx=25, pady = 10, sticky = "nw")
-        passwVerientry = customtkinter.CTkEntry(self.account_tabview.tab("Register"), width=125, height= 25, corner_radius=10, placeholder_text="Verify Password")
-        passwVerientry.grid( padx=25, pady = 10, sticky = "nw")
-        emailentry = customtkinter.CTkEntry(self.account_tabview.tab("Register"), width=125, height= 25, corner_radius=10, placeholder_text="Email")
-        emailentry.grid( padx=25, pady = 10, sticky = "nw")
-        signUpBtn=customtkinter.CTkButton(self.account_tabview.tab("Register"),width=125,height=25,corner_radius=10, text="Sign Up", command = lambda: self.register(nameentry, userentry, emailentry, passwentry, passwVerientry))        
+        name_entry = customtkinter.CTkEntry(self.account_tabview.tab("Register"), width=125, height= 25, corner_radius=10, placeholder_text="Name")
+        name_entry.grid( padx=25, pady = 10, sticky = "nw")
+        user_entry = customtkinter.CTkEntry(self.account_tabview.tab("Register"), width=125, height= 25, corner_radius=10, placeholder_text="User Name")
+        user_entry.grid( padx=25, pady = 10, sticky = "nw")
+        passw_entry = customtkinter.CTkEntry(self.account_tabview.tab("Register"), width=125, height= 25, corner_radius=10, placeholder_text="Password")
+        passw_entry.grid( padx=25, pady = 10, sticky = "nw")
+        passw_Veri_entry = customtkinter.CTkEntry(self.account_tabview.tab("Register"), width=125, height= 25, corner_radius=10, placeholder_text="Verify Password")
+        passw_Veri_entry.grid( padx=25, pady = 10, sticky = "nw")
+        email_entry = customtkinter.CTkEntry(self.account_tabview.tab("Register"), width=125, height= 25, corner_radius=10, placeholder_text="Email")
+        email_entry.grid( padx=25, pady = 10, sticky = "nw")
+        signUpBtn=customtkinter.CTkButton(self.account_tabview.tab("Register"),width=125,height=25,corner_radius=10, text="Sign Up", command = lambda: self.register(name_entry, user_entry, email_entry, passw_entry, passw_Veri_entry))        
         signUpBtn.grid(padx = 25, pady = 10, sticky = "nw")
 
         #Login Form
         self.login = customtkinter.CTkLabel(self.account_tabview.tab("Login"), text="Login", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.login.grid( padx=25, pady = 10, sticky = "nw")
-        loginUserentry = customtkinter.CTkEntry(self.account_tabview.tab("Login"), width=125, height= 25, corner_radius=10, placeholder_text="User")
-        loginUserentry.grid( padx=25, pady = 10, sticky = "nw")
-        loginUser= loginUserentry
-        loginPasswentry = customtkinter.CTkEntry(self.account_tabview.tab("Login"), width=125, height= 25, corner_radius=10, placeholder_text="User")
-        loginPasswentry.grid( padx=25, pady = 10, sticky = "nw")
-        loginPassw = loginPasswentry
-        loginBtn = customtkinter.CTkButton(self.account_tabview.tab("Login"), width=125, height= 25, corner_radius=10, text="Sign Up", command = lambda: self.log_in(loginUser, loginPassw)) 
+        login_user_entry = customtkinter.CTkEntry(self.account_tabview.tab("Login"), width=125, height= 25, corner_radius=10, placeholder_text="User")
+        login_user_entry.grid( padx=25, pady = 10, sticky = "nw")
+        login_passw_entry = customtkinter.CTkEntry(self.account_tabview.tab("Login"), width=125, height= 25, corner_radius=10, placeholder_text="User")
+        login_passw_entry.grid( padx=25, pady = 10, sticky = "nw")
+        loginBtn = customtkinter.CTkButton(self.account_tabview.tab("Login"), width=125, height= 25, corner_radius=10, text="Sign Up", command = lambda: self.log_in(login_user_entry, login_passw_entry)) 
         loginBtn.grid(padx = 25, pady = 10, sticky = "nw")
 
-    def register(self, nameentry, userentry, emailentry, passwentry, passwVerientry):
-        name = nameentry.get()
-        user = userentry.get()
-        email = emailentry.get()
-        passw = passwentry.get()
-        passwVeri = passwVerientry.get()
+    def register(self, name_entry, user_entry, email_entry, passw_entry, passw_Veri_entry):
+        name = name_entry.get()
+        user = user_entry.get()
+        email = email_entry.get()
+        passw = passw_entry.get()
+        passwVeri = passw_Veri_entry.get()
         if name == "" or user == "" or email == "" or passw == "" or passwVeri == "":
             tkinter.messagebox.showerror("Error", "All Fields Are Required", parent = self.account_tabview.tab("Register"))
         elif passw != passwVeri:
@@ -125,9 +130,6 @@ class App(customtkinter.CTk):
             passw.delete()
             passwVeri.delete()
             email.delete()
-        
-    def delete():
-        print("apple")
 
     def open_input_dialog_event(self):
         dialog = customtkinter.CTkInputDialog(text="Type in a number:", title="CTkInputDialog")
@@ -143,8 +145,13 @@ class App(customtkinter.CTk):
     def sidebar_button_event(self):
         print("sidebar_button click")
 
-    def log_in(self,loginUser, loginPassw):
-        print("apple")
+    def log_in(self, login_user_entry, login_passw_entry):
+        name = login_user_entry.get()
+        passw = login_passw_entry.get()
+
+    def pricing_aggregate(store, choice):
+        print(store.get())
+
 
 if __name__ == "__main__":
     app = App()
